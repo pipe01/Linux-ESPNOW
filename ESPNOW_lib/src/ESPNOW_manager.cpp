@@ -20,9 +20,8 @@
 #define MAC_2_MSBytes(MAC)  MAC == NULL ? 0 : (MAC[0] << 8) | MAC[1]
 #define MAC_4_LSBytes(MAC)  MAC == NULL ? 0 : (((((MAC[2] << 8) | MAC[3]) << 8) | MAC[4]) << 8) | MAC[5]
 
-void ESPNOW_manager::set_interface(char* interface) {
-	this->interface = (char*) malloc(strlen(interface)*sizeof(char));	
-	strcpy(this->interface, interface);
+void ESPNOW_manager::set_interface(const char* interface) {
+	this->interface = strdup(interface);
 }
 
 void ESPNOW_manager::set_recv_callback(void (*callback)(uint8_t src_mac[6], uint8_t *data, int len)) {
@@ -112,6 +111,8 @@ void ESPNOW_manager::set_filter(uint8_t *src_mac, uint8_t *dst_mac) {
 	memcpy(this->bpf.filter, temp_code, sizeof(struct sock_filter) * this->bpf.len);
 }
 
+#include <error.h>
+#include <errno.h>
 
 void ESPNOW_manager::start() {
 	struct sockaddr_ll s_dest_addr;
@@ -156,7 +157,9 @@ void ESPNOW_manager::start() {
 
 	this->recv_thread_params.sock_fd = this->sock_fd;
 
-	pthread_create (&recv_thd_id, NULL, &(ESPNOW_manager::sock_recv_thread), &recv_thread_params);
+	if (this->recv_thread_params.callback != nullptr) {
+		pthread_create (&recv_thd_id, NULL, &(ESPNOW_manager::sock_recv_thread), &recv_thread_params);
+	}
     
 }
 

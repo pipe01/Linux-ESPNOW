@@ -24,12 +24,12 @@ class ESPNOW_manager {
 			default_values();
 		}
 
-		ESPNOW_manager(char* interface) {
+		ESPNOW_manager(const char* interface) {
 			default_values();
 			set_interface(interface);
 		}
 
-		ESPNOW_manager(char* interface, uint8_t datarate, uint16_t channel_freq, uint8_t src_mac[6], uint8_t dst_mac[6], bool filterOn) {
+		ESPNOW_manager(const char* interface, uint8_t datarate, uint16_t channel_freq, uint8_t src_mac[6], uint8_t dst_mac[6], bool filterOn) {
 			default_values();
 			set_interface(interface);
 			set_channel(channel_freq);
@@ -47,7 +47,7 @@ class ESPNOW_manager {
 
 		void unset_filter();
 		void set_filter(uint8_t *src_mac, uint8_t *dst_mac);
-		void set_interface(char* interface);
+		void set_interface(const char* interface);
 		void set_recv_callback(void (*callback)(uint8_t src_mac[6], uint8_t *data, int len));
 		
 		void start();
